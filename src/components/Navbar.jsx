@@ -16,7 +16,12 @@ const Navbar = () => {
     <nav className="navbar">
       <div className="container navbar-container">
         <Link to="/" className="navbar-brand">
-          <span className="brand-icon">⚕️</span>
+          <img 
+            src="/images/logo.png" 
+            alt="BioStock Systems" 
+            className="brand-logo"
+            style={{ height: '40px', marginRight: '12px' }}
+          />
           <span className="brand-text">BioStock Systems</span>
         </Link>
 

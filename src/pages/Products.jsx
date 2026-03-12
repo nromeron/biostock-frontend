@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { getCategories } from '../data/products';
 import { productService } from '../services/productService';
 import { formatCurrency } from '../utils/helpers';
 import './Products.css';
@@ -83,11 +84,13 @@ const Products = () => {
               className="form-input"
             >
               <option value="">Todas las categorías</option>
-              <option value="surgical">Instrumental Quirúrgico</option>
-              <option value="consumables">Material Consumible</option>
-              <option value="diagnostic">Equipos de Diagnóstico</option>
-              <option value="protective">Equipo de Protección</option>
-              <option value="pharmaceuticals">Productos Farmacéuticos</option>
+              {/* Las categorías vienen de los productos quemados */}
+              <option value="Protección Personal">Protección Personal</option>
+              <option value="Equipos de Diagnóstico">Equipos de Diagnóstico</option>
+              <option value="Material Consumible">Material Consumible</option>
+              <option value="Desinfección">Desinfección</option>
+              <option value="Equipamiento">Equipamiento</option>
+              <option value="Instrumental Quirúrgico">Instrumental Quirúrgico</option>
             </select>
           </div>
         </div>
@@ -105,7 +108,7 @@ const Products = () => {
                     <img src={product.imageUrl} alt={product.name} />
                   ) : (
                     <div className="product-placeholder">
-                      <span>📦</span>
+                      <span>🏥</span>
                     </div>
                   )}
                   {product.stock <= 10 && product.stock > 0 && (

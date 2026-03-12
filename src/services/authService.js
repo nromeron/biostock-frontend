@@ -1,47 +1,33 @@
-import api from './api';
+import keycloakMock from './keycloakMock';
 
 export const authService = {
   // Login user
   async login(email, password) {
-    const response = await api.post('/api/auth/login', { email, password });
-    return response;
+    const result = await keycloakMock.login(email, password);
+    return result;
   },
 
   // Register new user
   async register(userData) {
-    const response = await api.post('/api/auth/register', userData);
-    return response;
+    const result = await keycloakMock.register(userData);
+    return result;
   },
 
   // Validate existing token
   async validateToken() {
-    const response = await api.get('/api/auth/validate');
-    return response;
+    if (keycloakMock.isAuthenticated()) {
+      return keycloakMock.getUserInfo();
+    }
+    throw new Error('Not authenticated');
   },
 
-  // Logout (client-side only, token is stateless)
+  // Logout
   logout() {
-    localStorage.removeItem('token');
+    keycloakMock.logout();
   },
 
-  // Get current user profile
+  // Get current user
   async getCurrentUser() {
-    const response = await api.get('/api/users/me');
-    return response;
-  },
-
-  // Update user profile
-  async updateProfile(userId, userData) {
-    const response = await api.put(`/api/users/${userId}`, userData);
-    return response;
-  },
-
-  // Change password
-  async changePassword(oldPassword, newPassword) {
-    const response = await api.post('/api/auth/change-password', {
-      oldPassword,
-      newPassword
-    });
-    return response;
+    return keycloakMock.getUserInfo();
   }
 };
