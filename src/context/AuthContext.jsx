@@ -8,23 +8,22 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Check for existing token on mount
-  useEffect(() => {
-    const initializeAuth = async () => {
-      const token = localStorage.getItem('token');
-      if (token) {
-        try {
-          // Validate token and get user data
-          const userData = await authService.validateToken();
-          setUser(userData);
-        } catch (err) {
-          console.error('Token validation failed:', err);
-          localStorage.removeItem('token');
-        }
+  const initializeAuth = async () => {
+    try {
+      const isAuthenticated = await authService.init();
+      if (isAuthenticated) {
+        const userData = await authService.getCurrentUser();
+        setUser(userData);
       }
+    } catch (err) {
+      console.error('Auth initialization failed:', err);
+      setError('Error inicializando autenticación');
+    } finally {
       setLoading(false);
-    };
+    }
+  };
 
+  useEffect(() => {
     initializeAuth();
   }, []);
 
@@ -32,15 +31,15 @@ export const AuthProvider = ({ children }) => {
     try {
       setError(null);
       const response = await authService.login(email, password);
-      const { token, user: userData } = response;
       
-      // Store token in localStorage
-      localStorage.setItem('token', token);
-      setUser(userData);
+      if (response && response.token) {
+        localStorage.setItem('token', response.token);
+        setUser(response.user);
+      }
       
       return { success: true };
     } catch (err) {
-      const errorMessage = err.response?.data?.message || 'Error al iniciar sesión';
+      const errorMessage = err.response?.data?.message || err.message || 'Error al iniciar sesión';
       setError(errorMessage);
       return { success: false, error: errorMessage };
     }
@@ -50,15 +49,15 @@ export const AuthProvider = ({ children }) => {
     try {
       setError(null);
       const response = await authService.register(userData);
-      const { token, user: newUser } = response;
       
-      // Store token in localStorage
-      localStorage.setItem('token', token);
-      setUser(newUser);
+      if (response && response.token) {
+        localStorage.setItem('token', response.token);
+        setUser(response.user);
+      }
       
       return { success: true };
     } catch (err) {
-      const errorMessage = err.response?.data?.message || 'Error al registrarse';
+      const errorMessage = err.response?.data?.message || err.message || 'Error al registrarse';
       setError(errorMessage);
       return { success: false, error: errorMessage };
     }

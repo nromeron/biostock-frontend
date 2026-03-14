@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { isValidEmail, isValidPassword } from '../utils/helpers';
+import { KEYCLOAK_CONFIG } from '../config/keycloak';
 import './Auth.css';
 
 const Register = () => {
@@ -95,106 +96,123 @@ const Register = () => {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="auth-form">
-          <div className="form-group">
-            <label htmlFor="name" className="form-label">
-              Nombre Completo *
-            </label>
-            <input
-              type="text"
-              id="name"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              className="form-input"
-              placeholder="Juan Pérez"
-            />
-            {errors.name && <div className="form-error">{errors.name}</div>}
+        {KEYCLOAK_CONFIG.provider === 'keycloak' ? (
+          <div className="auth-form" style={{ textAlign: 'center', padding: '2rem 0' }}>
+            <button 
+              type="button" 
+              className="btn btn-primary" 
+              onClick={() => register()}
+              disabled={loading}
+              style={{ padding: '1rem 2rem', fontSize: '1.2rem', width: '100%' }}
+            >
+              {loading ? 'Redirigiendo...' : 'Registrarse con Keycloak'}
+            </button>
+            <p style={{ marginTop: '1rem', color: 'var(--text-light, #666)' }}>
+              Autenticación segura. Serás redirigido a la página de registro.
+            </p>
           </div>
+        ) : (
+          <form onSubmit={handleSubmit} className="auth-form">
+            <div className="form-group">
+              <label htmlFor="name" className="form-label">
+                Nombre Completo *
+              </label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                className="form-input"
+                placeholder="Juan Pérez"
+              />
+              {errors.name && <div className="form-error">{errors.name}</div>}
+            </div>
 
-          <div className="form-group">
-            <label htmlFor="email" className="form-label">
-              Correo Electrónico *
-            </label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              className="form-input"
-              placeholder="ejemplo@correo.com"
-            />
-            {errors.email && <div className="form-error">{errors.email}</div>}
-          </div>
+            <div className="form-group">
+              <label htmlFor="email" className="form-label">
+                Correo Electrónico *
+              </label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                className="form-input"
+                placeholder="ejemplo@correo.com"
+              />
+              {errors.email && <div className="form-error">{errors.email}</div>}
+            </div>
 
-          <div className="form-group">
-            <label htmlFor="phone" className="form-label">
-              Teléfono *
-            </label>
-            <input
-              type="tel"
-              id="phone"
-              name="phone"
-              value={formData.phone}
-              onChange={handleChange}
-              className="form-input"
-              placeholder="+57 300 123 4567"
-            />
-            {errors.phone && <div className="form-error">{errors.phone}</div>}
-          </div>
+            <div className="form-group">
+              <label htmlFor="phone" className="form-label">
+                Teléfono *
+              </label>
+              <input
+                type="tel"
+                id="phone"
+                name="phone"
+                value={formData.phone}
+                onChange={handleChange}
+                className="form-input"
+                placeholder="+57 300 123 4567"
+              />
+              {errors.phone && <div className="form-error">{errors.phone}</div>}
+            </div>
 
-          <div className="form-group">
-            <label htmlFor="organization" className="form-label">
-              Organización (Opcional)
-            </label>
-            <input
-              type="text"
-              id="organization"
-              name="organization"
-              value={formData.organization}
-              onChange={handleChange}
-              className="form-input"
-              placeholder="Hospital San José"
-            />
-          </div>
+            <div className="form-group">
+              <label htmlFor="organization" className="form-label">
+                Organización (Opcional)
+              </label>
+              <input
+                type="text"
+                id="organization"
+                name="organization"
+                value={formData.organization}
+                onChange={handleChange}
+                className="form-input"
+                placeholder="Hospital San José"
+              />
+            </div>
 
-          <div className="form-group">
-            <label htmlFor="password" className="form-label">
-              Contraseña *
-            </label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              className="form-input"
-              placeholder="Mínimo 8 caracteres"
-            />
-            {errors.password && <div className="form-error">{errors.password}</div>}
-          </div>
+            <div className="form-group">
+              <label htmlFor="password" className="form-label">
+                Contraseña *
+              </label>
+              <input
+                type="password"
+                id="password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                className="form-input"
+                placeholder="Mínimo 8 caracteres"
+              />
+              {errors.password && <div className="form-error">{errors.password}</div>}
+            </div>
 
-          <div className="form-group">
-            <label htmlFor="confirmPassword" className="form-label">
-              Confirmar Contraseña *
-            </label>
-            <input
-              type="password"
-              id="confirmPassword"
-              name="confirmPassword"
-              value={formData.confirmPassword}
-              onChange={handleChange}
-              className="form-input"
-              placeholder="Confirma tu contraseña"
-            />
-            {errors.confirmPassword && <div className="form-error">{errors.confirmPassword}</div>}
-          </div>
+            <div className="form-group">
+              <label htmlFor="confirmPassword" className="form-label">
+                Confirmar Contraseña *
+              </label>
+              <input
+                type="password"
+                id="confirmPassword"
+                name="confirmPassword"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                className="form-input"
+                placeholder="Confirma tu contraseña"
+              />
+              {errors.confirmPassword && <div className="form-error">{errors.confirmPassword}</div>}
+            </div>
 
-          <button type="submit" className="btn btn-primary" disabled={loading}>
-            {loading ? 'Creando cuenta...' : 'Crear Cuenta'}
-          </button>
-        </form>
+            <button type="submit" className="btn btn-primary" disabled={loading}>
+              {loading ? 'Creando cuenta...' : 'Crear Cuenta'}
+            </button>
+          </form>
+        )}
 
         <div className="auth-footer">
           <p>

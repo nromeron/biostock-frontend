@@ -1,33 +1,51 @@
-import keycloakMock from './keycloakMock';
+import { getAuthProvider, KEYCLOAK_CONFIG } from '../config/keycloak';
+
+const authProvider = getAuthProvider();
 
 export const authService = {
+  async init() {
+    if (KEYCLOAK_CONFIG.provider === 'keycloak') {
+      return await authProvider.init();
+    }
+    // Mock initializes instantly
+    return authProvider.isAuthenticated();
+  },
+
   // Login user
   async login(email, password) {
-    const result = await keycloakMock.login(email, password);
-    return result;
+    if (KEYCLOAK_CONFIG.provider === 'keycloak') {
+      return authProvider.login(); // redirects to keycloak
+    }
+    return await authProvider.login(email, password);
   },
 
   // Register new user
   async register(userData) {
-    const result = await keycloakMock.register(userData);
-    return result;
+    if (KEYCLOAK_CONFIG.provider === 'keycloak') {
+      return authProvider.register(); // redirects to keycloak
+    }
+    return await authProvider.register(userData);
   },
 
   // Validate existing token
   async validateToken() {
-    if (keycloakMock.isAuthenticated()) {
-      return keycloakMock.getUserInfo();
+    if (authProvider.isAuthenticated()) {
+      return await authProvider.getUserInfo();
     }
     throw new Error('Not authenticated');
   },
 
   // Logout
   logout() {
-    keycloakMock.logout();
+    return authProvider.logout();
   },
 
   // Get current user
   async getCurrentUser() {
-    return keycloakMock.getUserInfo();
+    return await authProvider.getUserInfo();
+  },
+  
+  getToken() {
+    return authProvider.getToken();
   }
 };

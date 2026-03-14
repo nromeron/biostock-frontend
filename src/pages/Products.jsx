@@ -16,6 +16,8 @@ const Products = () => {
     inStock: true
   });
 
+  const [searchTerm, setSearchTerm] = useState('');
+
   useEffect(() => {
     fetchProducts();
   }, [filters]);
@@ -35,28 +37,17 @@ const Products = () => {
   };
 
   const handleSearchChange = (e) => {
-    setFilters(prev => ({ ...prev, search: e.target.value }));
+    setSearchTerm(e.target.value);
+  };
+
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    setFilters(prev => ({ ...prev, search: searchTerm }));
   };
 
   const handleCategoryChange = (e) => {
     setFilters(prev => ({ ...prev, category: e.target.value }));
   };
-
-  if (loading) {
-    return (
-      <div className="container">
-        <div className="spinner"></div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="container">
-        <div className="alert alert-error">{error}</div>
-      </div>
-    );
-  }
 
   return (
     <div className="products-page">
@@ -66,16 +57,25 @@ const Products = () => {
           <p>Insumos médicos de alta calidad para instituciones de salud</p>
         </div>
 
+        {error && (
+          <div className="alert alert-error" style={{ marginBottom: '1rem' }}>
+            {error}
+          </div>
+        )}
+
         <div className="filters-section">
-          <div className="search-box">
+          <form className="search-box" onSubmit={handleSearchSubmit} style={{ display: 'flex', gap: '0.5rem' }}>
             <input
               type="text"
               placeholder="Buscar productos..."
-              value={filters.search}
+              value={searchTerm}
               onChange={handleSearchChange}
               className="form-input"
             />
-          </div>
+            <button type="submit" className="btn btn-primary" disabled={loading}>
+              Buscar
+            </button>
+          </form>
 
           <div className="filter-group">
             <select
@@ -96,9 +96,13 @@ const Products = () => {
         </div>
 
         <div className="products-grid">
-          {products.length === 0 ? (
-            <div className="no-products">
-              <p>No se encontraron productos</p>
+          {loading ? (
+            <div className="spinner-container" style={{ gridColumn: '1 / -1', display: 'flex', justifyContent: 'center', padding: '3rem' }}>
+              <div className="spinner"></div>
+            </div>
+          ) : products.length === 0 ? (
+            <div className="no-products" style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '3rem' }}>
+              <p>No se encontraron productos coherentes con la búsqueda.</p>
             </div>
           ) : (
             products.map((product) => (

@@ -2,6 +2,7 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import './Navbar.css';
+import logo from '../assets/logo.png';
 
 const Navbar = () => {
   const { user, logout, isAuthenticated } = useAuth();
@@ -17,7 +18,7 @@ const Navbar = () => {
       <div className="container navbar-container">
         <Link to="/" className="navbar-brand">
           <img 
-            src="/images/logo.png" 
+            src={logo} 
             alt="BioStock Systems" 
             className="brand-logo"
             style={{ height: '40px', marginRight: '12px' }}
